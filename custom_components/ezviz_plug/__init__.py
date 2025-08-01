@@ -1,7 +1,11 @@
 """Ezviz Smart Plug integration."""
 
 from homeassistant import config_entries, core
+from homeassistant.const import Platform
+
 from .const import DOMAIN
+
+PLATFORMS = [Platform.SWITCH]
 
 
 async def async_setup_entry(hass: core.HomeAssistant, entry: config_entries.ConfigEntry) -> bool:
@@ -18,11 +22,23 @@ async def async_setup_entry(hass: core.HomeAssistant, entry: config_entries.Conf
     hass.data[DOMAIN][entry.entry_id] = hass_data
 
     # Forward the setup to the switch platform.
-    hass.async_create_task(
-        hass.config_entries.async_forward_entry_setup(entry, "switch")
-    )
+    await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
     return True
+
+
+async def async_unload_entry(hass: core.HomeAssistant, entry: config_entries.ConfigEntry) -> bool:
+    """Unload a config entry."""
+    unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
+    
+    if unload_ok:
+        # Remove options_update_listener.
+        hass.data[DOMAIN][entry.entry_id]["unsub_options_update_listener"]()
+        
+        # Remove config entry from domain.
+        entry_data = hass.data[DOMAIN].pop(entry.entry_id)
+        
+    return unload_ok
 
 
 async def options_update_listener(hass: core.HomeAssistant, config_entry: config_entries.ConfigEntry):

@@ -45,8 +45,8 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
 
 
 async def async_unload_entry(hass, config_entry):
+    """Handle unloading of an entry."""
     _LOGGER.debug(f"async_unload_entry {DOMAIN}: {config_entry}")
-
     return True
 
 
@@ -86,18 +86,28 @@ async def async_setup_entry(hass: core.HomeAssistant, entry: ConfigEntry,
                             async_add_entities: AddEntitiesCallback) -> None:
     """Set up Ezviz switch based on a config entry."""
 
-    email = hass.data[DOMAIN][entry.entry_id][CONF_EMAIL]
-    password = hass.data[DOMAIN][entry.entry_id][CONF_PASSWORD]
+    # Get authentication data from the entry
+    entry_data = hass.data[DOMAIN][entry.entry_id]
+    email = entry_data.get(CONF_EMAIL)
+    password = entry_data.get(CONF_PASSWORD)
+    
+    if not email or not password:
+        _LOGGER.error("Missing email or password in config entry")
+        return False
+    
     ezvizClient = client.EzvizClient(email, password)
 
     try:
         auth_data = await hass.async_add_executor_job(ezvizClient.login)
     except (InvalidHost, InvalidURL, HTTPError, PyEzvizError) as error:
         _LOGGER.exception('Invalid response from API: %s', error)
+        return False
     except EzvizAuthVerificationCode:
         _LOGGER.exception('MFA Required')
+        return False
     except (Exception) as error:
         _LOGGER.exception('Unexpected exception: %s', error)
+        return False
 
     coordinator = EzvizDataUpdateCoordinator(hass, api=ezvizClient, api_timeout=10)
 

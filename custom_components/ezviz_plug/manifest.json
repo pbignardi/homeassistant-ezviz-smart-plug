@@ -1,12 +1,12 @@
 {
-  "codeowners": ["@khal3d"],
+  "codeowners": ["@khal3d", "@maciejwaloszczyk"],
   "config_flow": true,
   "dependencies": [],
-  "documentation": "https://github.com/khal3d/homeassistant-ezviz-smart-plug",
-  "issue_tracker": "https://github.com/khal3d/homeassistant-ezviz-smart-plug/issues",
+  "documentation": "https://github.com/maciejwaloszczyk/homeassistant-ezviz-smart-plug",
+  "issue_tracker": "https://github.com/maciejwaloszczyk/homeassistant-ezviz-smart-plug/issues",
   "domain": "ezviz_plug",
   "iot_class": "cloud_polling",
   "name": "EZVIZ Smart Plug",
-  "requirements": [],
-  "version": "1.0.0"
+  "requirements": ["pyezviz"],
+  "version": "1.1.0"
 }

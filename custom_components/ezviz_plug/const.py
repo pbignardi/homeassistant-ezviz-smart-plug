@@ -5,6 +5,7 @@ DOMAIN = "ezviz_plug"
 # Configuration
 CONF_SESSION_ID = "session_id"
 CONF_RFSESSION_ID = "rf_session_id"
+CONF_CUSTOMIZE = "customize"
 
 # Defaults
 EU_URL = "apiieu.ezvizlife.com"
