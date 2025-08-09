@@ -35,7 +35,8 @@ class EzvizDataUpdateCoordinator(DataUpdateCoordinator):
                 if int(entity['type']) is int(14):
                     device['enable'] = entity['enable']
 
-            if device["deviceSerial"].startswith("Q"):
+            devSerial = device["deviceSerial"]
+            if devSerial.startswith("Q") or devSerial.startswith("B"):
                 plugs[device['deviceSerial']] = device
 
         return plugs
